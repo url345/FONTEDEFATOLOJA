@@ -118,6 +118,41 @@
   .price-row{display:flex; align-items:baseline; gap:8px; margin-bottom:12px;}
   .price-now{font-weight:800; font-size:16px;}
   .price-old{color:var(--price-old); text-decoration:line-through; font-size:13.5px;}
+  .size-select{
+    width:100%; border:1px solid var(--line); border-radius:10px; padding:9px 10px;
+    font-size:13px; font-weight:600; margin-bottom:8px; background:#fff; color:var(--ink);
+    display:none;
+  }
+
+  /* Quick view: bottom sheet com foto + numeração */
+  .qv-sheet{
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    background:#fff; border-radius:20px 20px 0 0;
+    max-height:90vh; overflow-y:auto;
+    transform:translateY(100%); transition:transform .3s ease;
+    padding:20px 20px 24px;
+    max-width:480px; margin:0 auto;
+  }
+  .qv-sheet.open{transform:translateY(0);}
+  .qv-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+  .qv-head h3{font-size:18px; font-weight:800; padding-right:12px;}
+  .qv-media{
+    width:100%; aspect-ratio:1/1; border-radius:14px; overflow:hidden; margin-bottom:18px;
+    background:linear-gradient(155deg,#eef0f2,#dfe3e6);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .qv-media svg{width:50%; height:50%; opacity:0.85;}
+  .qv-price{display:flex; align-items:baseline; gap:10px; margin-bottom:20px;}
+  .qv-price .now{font-weight:800; font-size:23px;}
+  .qv-price .old{color:var(--price-old); text-decoration:line-through; font-size:15px;}
+  .qv-size-label{font-weight:700; font-size:13px; color:var(--ink-soft); margin-bottom:12px;}
+  .qv-sizes{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:24px;}
+  .qv-size-btn{
+    min-width:52px; height:52px; padding:0 14px; border-radius:50px;
+    border:1px solid var(--line); background:#fff; font-weight:700; font-size:14px;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .qv-size-btn.selected{background:#111; color:#fff; border-color:#111;}
   .btn-buy, .btn-primary{
     display:block; text-align:center;
     background:#111; color:#fff; font-weight:700; font-size:14px;
@@ -436,6 +471,27 @@
   </div>
 </aside>
 
+<!-- Quick view: escolha de tamanho/numeração -->
+<div class="overlay" id="qv-overlay"></div>
+<div class="qv-sheet" id="qv-sheet">
+  <div class="qv-head">
+    <h3 id="qv-name">Produto</h3>
+    <button class="drawer-close" id="qv-close-btn" aria-label="Fechar">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="qv-media" id="qv-media"></div>
+  <div class="qv-price">
+    <span class="now" id="qv-price-now">R$ 0,00</span>
+    <span class="old" id="qv-price-old">R$ 0,00</span>
+  </div>
+  <div id="qv-size-section">
+    <div class="qv-size-label" id="qv-size-label">Tamanho</div>
+    <div class="qv-sizes" id="qv-sizes"></div>
+  </div>
+  <button class="btn-primary" id="qv-add-btn">Adicionar ao carrinho</button>
+</div>
+
 <!-- Checkout screen -->
 <section class="checkout-screen" id="checkout-screen">
   <div class="checkout-head">
@@ -654,7 +710,7 @@ const clothesData = [
   mizuno_marinho: "file_00000000b2f0820e81b4a69bbb4e8316.png",
   mizuno_preto_cinza: "",
   mizuno_preto_vermelho: "",
-  mizuno_preto_dourado: "",
+  mizuno_preto_dourado: "file_00000000be34820e8dc7d21021951f9d.png",
   mizuno_preto_grafite: "",
   mizuno_preto_pink: "",
   mizuno_preto_verde: "",
@@ -673,7 +729,7 @@ const clothesData = [
     { id:2, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 129.99, old: 379.99, pct: "-66%", destaque: true, photo: "mizuno_marinho", cats:["mizuno"] },
     { id:3, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 249.99, old: 379.99, pct: "-34%", destaque: false, photo: "mizuno_preto_cinza", cats:["mizuno"] },
     { id:4, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 249.99, old: 379.99, pct: "-34%", destaque: false, photo: "mizuno_preto_vermelho", cats:["mizuno"] },
-    { id:5, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 249.99, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_dourado", cats:["mizuno"] },
+    { id:5, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 129.99, old: 379.99, pct: "-66%", destaque: true, photo: "mizuno_preto_dourado", cats:["mizuno"] },
     { id:6, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 299.99, old: 399.99, pct: "-25%", destaque: true, photo: "mizuno_preto_grafite", cats:["mizuno"] },
     { id:7, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 249.99, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_pink", cats:["mizuno"] },
     { id:8, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 249.99, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_verde", cats:["mizuno"] }
@@ -703,6 +759,17 @@ const clothesData = [
     return img
       ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">`
       : shoeSvg;
+  }
+
+  function sizeOptionsFor(p){
+    const cats = p.cats || [];
+    const isShoe = cats.includes('mizuno') || cats.includes('nike') ||
+      (cats.includes('adidas') && !cats.includes('bone-acessorios')) ||
+      p.name.includes('Tênis') || p.name.includes('Slide');
+    if (isShoe) return { label: 'Tamanho numérico', options: ['34','35','36','37','38','39','40','41','42','43','44'] };
+    if (cats.includes('calcas-bermudas')) return { label: 'Tamanho numérico', options: ['36','38','40','42','44','46','48'] };
+    if (cats.includes('bone-acessorios')) return null; // tamanho único
+    return { label: 'Tamanho', options: ['PP','P','M','G','GG'] };
   }
 
   function renderCardHTML(p){
@@ -768,28 +835,29 @@ const clothesData = [
   document.getElementById('clear-filter-btn').addEventListener('click', () => filterByCategory(null));
 
   // ---------- Cart state (in-memory, resets on reload) ----------
-  let cart = []; // {id, name, price, qty}
+  let cart = []; // {key, id, size, name, price, qty}
   let selectedShipping = null; // {label, price, days}
 
-  function addToCart(id){
+  function addToCart(id, size){
     const p = products.find(x => x.id === id);
-    const existing = cart.find(x => x.id === id);
+    const key = id + '|' + (size || '');
+    const existing = cart.find(x => x.key === key);
     if (existing) existing.qty += 1;
-    else cart.push({ id: p.id, name: p.name, price: p.price, qty: 1 });
+    else cart.push({ key, id: p.id, size: size || null, name: p.name, price: p.price, qty: 1 });
     renderCart();
     openCart();
   }
 
-  function changeQty(id, delta){
-    const item = cart.find(x => x.id === id);
+  function changeQty(key, delta){
+    const item = cart.find(x => x.key === key);
     if (!item) return;
     item.qty += delta;
-    if (item.qty <= 0) cart = cart.filter(x => x.id !== id);
+    if (item.qty <= 0) cart = cart.filter(x => x.key !== key);
     renderCart();
   }
 
-  function removeItem(id){
-    cart = cart.filter(x => x.id !== id);
+  function removeItem(key){
+    cart = cart.filter(x => x.key !== key);
     renderCart();
   }
 
@@ -821,13 +889,13 @@ const clothesData = [
       <div class="cart-item">
         <div class="thumb">${(() => { const p = products.find(x => x.id === item.id); return p ? productMedia(p) : shoeSvg; })()}</div>
         <div class="cart-item-info">
-          <span class="name">${item.name}</span>
+          <span class="name">${item.name}${item.size ? ' · Tam: ' + item.size : ''}</span>
           <span>${brl(item.price)}</span>
           <div class="qty-row">
-            <button class="qty-btn" data-qty-minus="${item.id}">−</button>
+            <button class="qty-btn" data-qty-minus="${item.key}">−</button>
             <span>${item.qty}</span>
-            <button class="qty-btn" data-qty-plus="${item.id}">+</button>
-            <button class="remove-link" data-remove="${item.id}">remover</button>
+            <button class="qty-btn" data-qty-plus="${item.key}">+</button>
+            <button class="remove-link" data-remove="${item.key}">remover</button>
           </div>
         </div>
       </div>
@@ -927,17 +995,78 @@ const clothesData = [
 
   // ---------- Event delegation ----------
   document.body.addEventListener('click', (e) => {
-    const addId = e.target.closest('[data-add]');
-    if (addId) addToCart(Number(addId.dataset.add));
+    const addBtn = e.target.closest('[data-add]');
+    if (addBtn){
+      openQuickView(Number(addBtn.dataset.add));
+    }
 
     const qtyPlus = e.target.closest('[data-qty-plus]');
-    if (qtyPlus) changeQty(Number(qtyPlus.dataset.qtyPlus), 1);
+    if (qtyPlus) changeQty(qtyPlus.dataset.qtyPlus, 1);
 
     const qtyMinus = e.target.closest('[data-qty-minus]');
-    if (qtyMinus) changeQty(Number(qtyMinus.dataset.qtyMinus), -1);
+    if (qtyMinus) changeQty(qtyMinus.dataset.qtyMinus, -1);
 
     const remove = e.target.closest('[data-remove]');
-    if (remove) removeItem(Number(remove.dataset.remove));
+    if (remove) removeItem(remove.dataset.remove);
+  });
+
+  // ---------- Quick view: modal de tamanho/numeração ----------
+  const qvOverlay = document.getElementById('qv-overlay');
+  const qvSheet = document.getElementById('qv-sheet');
+  let qvProduct = null;
+  let qvSize = null;
+
+  function openQuickView(id){
+    qvProduct = products.find(p => p.id === id);
+    if (!qvProduct) return;
+    qvSize = null;
+
+    document.getElementById('qv-name').textContent = qvProduct.name;
+    document.getElementById('qv-media').innerHTML = productMedia(qvProduct);
+    document.getElementById('qv-price-now').textContent = brl(qvProduct.price);
+    document.getElementById('qv-price-old').textContent = brl(qvProduct.old);
+
+    const opt = sizeOptionsFor(qvProduct);
+    const sizeSection = document.getElementById('qv-size-section');
+    if (opt){
+      sizeSection.style.display = 'block';
+      document.getElementById('qv-size-label').textContent = opt.label;
+      document.getElementById('qv-sizes').innerHTML = opt.options.map(o =>
+        `<button type="button" class="qv-size-btn" data-size="${o}">${o}</button>`
+      ).join('');
+    } else {
+      sizeSection.style.display = 'none';
+    }
+
+    qvOverlay.classList.add('open');
+    qvSheet.classList.add('open');
+  }
+
+  function closeQuickView(){
+    qvOverlay.classList.remove('open');
+    qvSheet.classList.remove('open');
+  }
+
+  document.getElementById('qv-close-btn').addEventListener('click', closeQuickView);
+  qvOverlay.addEventListener('click', closeQuickView);
+
+  document.getElementById('qv-sizes').addEventListener('click', (e) => {
+    const btn = e.target.closest('.qv-size-btn');
+    if (!btn) return;
+    qvSize = btn.dataset.size;
+    document.querySelectorAll('.qv-size-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+
+  document.getElementById('qv-add-btn').addEventListener('click', () => {
+    if (!qvProduct) return;
+    const needsSize = !!sizeOptionsFor(qvProduct);
+    if (needsSize && !qvSize){
+      alert('Escolha a numeração/tamanho antes de adicionar à sacola.');
+      return;
+    }
+    addToCart(qvProduct.id, qvSize);
+    closeQuickView();
   });
 
   // ---------- Cart drawer open/close ----------
