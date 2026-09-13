@@ -396,7 +396,7 @@
   <section class="section">
     <h2>Destaques</h2>
     <div class="grid" id="destaques-grid"></div>
-    <div class="see-all"><a href="#produtos">Ver todos os produtos</a></div>
+    <div class="see-all"><a href="#produtos" id="see-all-btn">Ver todos os produtos</a></div>
   </section>
 
   <section class="section" id="categorias">
@@ -506,6 +506,7 @@
       <div class="co-section">
         <h4>Endereço de entrega</h4>
         <div class="field"><label>Nome completo</label><input type="text" id="ck-name" placeholder="Seu nome"></div>
+        <div class="field"><label>Telefone</label><input type="tel" id="ck-phone" placeholder="(00) 00000-0000" maxlength="15"></div>
         <div class="field-grid">
           <div class="field"><label>CEP</label><input type="text" id="ck-cep" placeholder="00000-000" maxlength="9"></div>
           <div class="field"><label>Número</label><input type="text" id="ck-num" placeholder="123"></div>
@@ -624,7 +625,7 @@
   // ---------- Roupas / calçados / acessórios (catálogo completo) ----------
 const clothesData = [
   { key:"p1_tl", name:"Blusa Lacoste Monograma Verde", price:149.99, old:279.99, pct:"-46%", cats:["lacoste","blusas-jaquetas"] },
-  { key:"p1_tr", name:"Tênis Lacoste 1004", price:249.99, old:489.99, pct:"-49%", cats:["lacoste"] },
+  { key:"p1_tr", name:"Tênis Lacoste 1004", price:250.00, old:489.99, pct:"-49%", cats:["lacoste"] },
   { key:"p1_bl", name:"Jaqueta Tommy Valejador", price:249.99, old:449.99, pct:"-44%", cats:["blusas-jaquetas"] },
   { key:"p1_br", name:"Boné Tommy Plaquinha Azul", price:179.99, old:299.99, pct:"-40%", cats:["bone-acessorios"] },
 
@@ -669,8 +670,8 @@ const clothesData = [
   { key:"p9_br", name:"Bermuda Jordan Vermelha", price:109.99, old:149.99, pct:"-27%", cats:["calcas-bermudas"] },
 
   { key:"p10_tl", name:"Boné Jordan All Black", price:179.99, old:299.99, pct:"-40%", cats:["bone-acessorios"] },
-  { key:"p10_tr", name:"Adidas Grand Court 3.0", price:249.99, old:399.99, pct:"-38%", cats:["adidas"] },
-  { key:"p10_bl", name:"Adidas Grand Court 2.0", price:249.99, old:399.99, pct:"-38%", cats:["adidas"] },
+  { key:"p10_tr", name:"Adidas Grand Court 3.0", price:250.00, old:399.99, pct:"-38%", cats:["adidas"] },
+  { key:"p10_bl", name:"Adidas Grand Court 2.0", price:250.00, old:399.99, pct:"-38%", cats:["adidas"] },
   { key:"p10_br", name:"Blusa Jordan", price:149.99, old:279.99, pct:"-46%", cats:["blusas-jaquetas"] },
 
   { key:"p11_tl", name:"Camiseta Lacoste Djokvick Branco", price:149.99, old:249.99, pct:"-40%", cats:["lacoste","camisas"] },
@@ -685,8 +686,8 @@ const clothesData = [
 
   { key:"p13_tl", name:"Blusa Meio Zíper Tommy Preta", price:149.99, old:279.99, pct:"-46%", cats:["blusas-jaquetas"] },
   { key:"p13_tr", name:"Blusa Jordan Tags", price:149.99, old:279.99, pct:"-46%", cats:["blusas-jaquetas"] },
-  { key:"p13_bl", name:"Nike Borough Mid 2 Vermelho", price:249.99, old:369.99, pct:"-32%", cats:["nike"] },
-  { key:"p13_br", name:"Nike Borough Mid 2 Azul", price:249.99, old:369.99, pct:"-32%", cats:["nike"] },
+  { key:"p13_bl", name:"Nike Borough Mid 2 Vermelho", price:250.00, old:369.99, pct:"-32%", cats:["nike"] },
+  { key:"p13_br", name:"Nike Borough Mid 2 Azul", price:250.00, old:369.99, pct:"-32%", cats:["nike"] },
 
   { key:"p14_tl", name:"Conjunto Tommy", price:249.99, old:349.99, pct:"-29%", cats:["conjunto"] },
   { key:"p14_tr", name:"Boné Lacoste Sport 2025 Ori", price:299.99, old:349.99, pct:"-14%", cats:["lacoste","bone-acessorios"] },
@@ -725,14 +726,14 @@ const clothesData = [
 
   // ---------- Product data ----------
   const products = [
-    { id:1, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 129.99, old: 379.99, pct: "-66%", destaque: true, photo: "mizuno_preto_azul", cats:["mizuno"] },
-    { id:2, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 129.99, old: 379.99, pct: "-66%", destaque: true, photo: "mizuno_marinho", cats:["mizuno"] },
-    { id:3, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 249.99, old: 379.99, pct: "-34%", destaque: false, photo: "mizuno_preto_cinza", cats:["mizuno"] },
-    { id:4, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 249.99, old: 379.99, pct: "-34%", destaque: false, photo: "mizuno_preto_vermelho", cats:["mizuno"] },
-    { id:5, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 129.99, old: 379.99, pct: "-66%", destaque: true, photo: "mizuno_preto_dourado", cats:["mizuno"] },
-    { id:6, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 129.99, old: 379.99, pct: "-66%", destaque: true, photo: "mizuno_preto_grafite", cats:["mizuno"] },
-    { id:7, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 249.99, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_pink", cats:["mizuno"] },
-    { id:8, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 249.99, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_verde", cats:["mizuno"] }
+    { id:1, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 250.00, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_azul", cats:["mizuno"] },
+    { id:2, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 250.00, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_marinho", cats:["mizuno"] },
+    { id:3, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 250.00, old: 379.99, pct: "-34%", destaque: false, photo: "mizuno_preto_cinza", cats:["mizuno"] },
+    { id:4, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 250.00, old: 379.99, pct: "-34%", destaque: false, photo: "mizuno_preto_vermelho", cats:["mizuno"] },
+    { id:5, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 250.00, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_dourado", cats:["mizuno"] },
+    { id:6, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 250.00, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_grafite", cats:["mizuno"] },
+    { id:7, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 250.00, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_pink", cats:["mizuno"] },
+    { id:8, name: "MIZUN0 IMPORTADO VIETNÃ 🇻🇳", price: 250.00, old: 379.99, pct: "-34%", destaque: true, photo: "mizuno_preto_verde", cats:["mizuno"] }
   ];
 
   // Adiciona o catálogo de roupas/bonés/acessórios com ids sequenciais
@@ -833,6 +834,11 @@ const clothesData = [
     btn.addEventListener('click', () => filterByCategory(btn.dataset.cat));
   });
   document.getElementById('clear-filter-btn').addEventListener('click', () => filterByCategory(null));
+
+  document.getElementById('see-all-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    filterByCategory(null);
+  });
 
   // ---------- Cart state (in-memory, resets on reload) ----------
   let cart = []; // {key, id, size, name, price, qty}
@@ -972,6 +978,22 @@ const clothesData = [
   }
   maskCep(document.getElementById('cep-input'));
   maskCep(document.getElementById('ck-cep'));
+
+  // Máscara de telefone: (00) 00000-0000
+  const phoneInput = document.getElementById('ck-phone');
+  phoneInput.addEventListener('input', () => {
+    let v = phoneInput.value.replace(/\D/g, "").slice(0, 11);
+    if (v.length > 10){
+      v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    } else if (v.length > 6){
+      v = `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
+    } else if (v.length > 2){
+      v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+    } else if (v.length > 0){
+      v = `(${v}`;
+    }
+    phoneInput.value = v;
+  });
 
   document.getElementById('cep-btn').addEventListener('click', () => {
     const val = document.getElementById('cep-input').value;
@@ -1132,9 +1154,10 @@ const clothesData = [
 
   document.getElementById('place-order-btn').addEventListener('click', () => {
     const name = document.getElementById('ck-name').value.trim();
+    const phone = document.getElementById('ck-phone').value.trim();
     const addr = document.getElementById('ck-addr').value.trim();
-    if (!name || !addr || !selectedShipping){
-      alert('Preencha nome, endereço e escolha uma opção de frete antes de confirmar.');
+    if (!name || !phone || !addr || !selectedShipping){
+      alert('Preencha nome, telefone, endereço e escolha uma opção de frete antes de confirmar.');
       return;
     }
     document.getElementById('checkout-form-view').style.display = 'none';
