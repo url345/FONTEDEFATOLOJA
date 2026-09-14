@@ -800,7 +800,24 @@ const clothesData = [
 
   // ---------- Render products ----------
   const grid = document.getElementById('destaques-grid');
-  grid.innerHTML = products.filter(p => p.cats && p.cats.includes('mizuno')).map(renderCardHTML).join('');
+  const seeAllBtn = document.getElementById('see-all-btn');
+  const mizunoProducts = products.filter(p => p.cats && p.cats.includes('mizuno'));
+  const DESTAQUES_PAGE_SIZE = 2;
+  let destaquesShown = DESTAQUES_PAGE_SIZE;
+
+  function renderDestaques(){
+    grid.innerHTML = mizunoProducts.slice(0, destaquesShown).map(renderCardHTML).join('');
+    if (destaquesShown >= mizunoProducts.length){
+      seeAllBtn.textContent = 'Você já viu todos os tênis';
+      seeAllBtn.style.pointerEvents = 'none';
+      seeAllBtn.style.opacity = '0.6';
+    } else {
+      seeAllBtn.textContent = 'Ver todos os produtos';
+      seeAllBtn.style.pointerEvents = 'auto';
+      seeAllBtn.style.opacity = '1';
+    }
+  }
+  renderDestaques();
 
   const allGrid = document.getElementById('all-products-grid');
   if (allGrid) allGrid.innerHTML = products.map(renderCardHTML).join('');
@@ -835,9 +852,11 @@ const clothesData = [
   });
   document.getElementById('clear-filter-btn').addEventListener('click', () => filterByCategory(null));
 
-  document.getElementById('see-all-btn').addEventListener('click', (e) => {
+  seeAllBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    filterByCategory(null);
+    if (destaquesShown >= mizunoProducts.length) return;
+    destaquesShown += DESTAQUES_PAGE_SIZE;
+    renderDestaques();
   });
 
   // ---------- Cart state (in-memory, resets on reload) ----------
