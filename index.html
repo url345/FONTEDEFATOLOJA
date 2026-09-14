@@ -327,18 +327,10 @@
     border-bottom:1px solid var(--line); color:var(--ink);
   }
   .auth-tabs{display:flex; gap:8px; margin-bottom:18px;}
-  .auth-divider{
-    display:flex; align-items:center; gap:10px; margin:16px 0;
-    color:var(--ink-soft); font-size:12.5px;
-  }
-  .auth-divider::before, .auth-divider::after{
-    content:""; flex:1; height:1px; background:var(--line);
-  }
-  .btn-google{
-    display:flex; align-items:center; justify-content:center; gap:10px;
-    width:100%; padding:11px 0; border-radius:var(--radius-pill);
-    border:1px solid var(--line); background:#fff; font-weight:700; font-size:14px;
-    cursor:pointer; color:var(--ink);
+  .auth-error{
+    background:#fdecec; color:#b3261e; border:1px solid #f5c2c0;
+    border-radius:10px; padding:12px 14px; font-size:13.5px; font-weight:600;
+    margin-bottom:14px; display:flex; align-items:center; gap:8px;
   }
   .auth-tab{
     flex:1; text-align:center; padding:10px 0; border-radius:10px; font-weight:700; font-size:13.5px;
@@ -1269,23 +1261,6 @@ const clothesData = [
   document.getElementById('account-close-btn').addEventListener('click', closeAccount);
   accountOverlay.addEventListener('click', closeAccount);
 
-  // ---------- Login com Google (via Firebase) ----------
-  function handleGoogleLoginClick(){
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-      .then(result => {
-        currentUser = { name: result.user.displayName, email: result.user.email };
-        renderAccount();
-      })
-      .catch(err => {
-        if (err.code === 'auth/operation-not-allowed'){
-          alert('O login com Google ainda não foi ativado no Firebase. No console, vá em Authentication > Sign-in method e ative o provedor Google.');
-        } else if (err.code !== 'auth/popup-closed-by-user'){
-          alert('Não foi possível entrar com o Google. Tente novamente.');
-        }
-      });
-  }
-
   function renderAccount(){
     if (currentUser){
       accountBody.innerHTML = `
@@ -1306,19 +1281,12 @@ const clothesData = [
     }
 
     accountBody.innerHTML = `
-      <button class="btn-google" id="google-login-btn">
-        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.5 5.5 29.6 3.5 24 3.5 12.7 3.5 3.5 12.7 3.5 24S12.7 44.5 24 44.5c11.3 0 20.5-9.2 20.5-20.5 0-1.4-.1-2.7-.4-4z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.8 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.5 5.5 29.6 3.5 24 3.5c-7.7 0-14.4 4.4-17.7 11.2z"/><path fill="#4CAF50" d="M24 44.5c5.5 0 10.4-1.9 14.2-5.1l-6.5-5.5C29.6 35.5 26.9 36.5 24 36.5c-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.5 40 16.2 44.5 24 44.5z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.9l6.5 5.5C40.5 36.6 44.5 30.9 44.5 24c0-1.4-.1-2.7-.4-4z"/></svg>
-        Continuar com Google
-      </button>
-      <div class="auth-divider">ou</div>
       <div class="auth-tabs">
         <button class="auth-tab active" data-tab="login">Entrar</button>
         <button class="auth-tab" data-tab="signup">Criar conta</button>
       </div>
       <div id="auth-form"></div>
     `;
-
-    document.getElementById('google-login-btn').addEventListener('click', handleGoogleLoginClick);
 
     const tabs = accountBody.querySelectorAll('.auth-tab');
     tabs.forEach(tab => {
@@ -1348,19 +1316,22 @@ const clothesData = [
     const box = document.getElementById('auth-form');
     if (mode === 'signup'){
       box.innerHTML = `
+        <div id="auth-error-box"></div>
         <div class="field"><label>Nome</label><input type="text" id="signup-name" placeholder="Seu nome"></div>
         <div class="field"><label>E-mail</label><input type="email" id="signup-email" placeholder="voce@email.com"></div>
         <div class="field"><label>Senha</label><input type="password" id="signup-pass" placeholder="Crie uma senha (mín. 6 caracteres)"></div>
         <button class="btn-primary" id="signup-btn" style="margin-top:10px;">Criar conta</button>
       `;
+      const errorBox = document.getElementById('auth-error-box');
       document.getElementById('signup-btn').addEventListener('click', () => {
         const name = document.getElementById('signup-name').value.trim();
         const email = document.getElementById('signup-email').value.trim();
         const pass = document.getElementById('signup-pass').value;
         if (!name || !email || !pass){
-          alert('Preencha nome, e-mail e senha pra criar sua conta.');
+          errorBox.innerHTML = '<div class="auth-error">Preencha nome, e-mail e senha pra criar sua conta.</div>';
           return;
         }
+        errorBox.innerHTML = '';
         const btn = document.getElementById('signup-btn');
         btn.disabled = true; btn.textContent = 'Criando...';
         auth.createUserWithEmailAndPassword(email, pass)
@@ -1370,23 +1341,26 @@ const clothesData = [
             renderAccount();
           })
           .catch(err => {
-            alert(firebaseErrorMessage(err));
+            errorBox.innerHTML = '<div class="auth-error">' + firebaseErrorMessage(err) + '</div>';
             btn.disabled = false; btn.textContent = 'Criar conta';
           });
       });
     } else {
       box.innerHTML = `
+        <div id="auth-error-box"></div>
         <div class="field"><label>E-mail</label><input type="email" id="login-email" placeholder="voce@email.com"></div>
         <div class="field"><label>Senha</label><input type="password" id="login-pass" placeholder="Sua senha"></div>
         <button class="btn-primary" id="login-btn" style="margin-top:10px;">Entrar</button>
       `;
+      const errorBox = document.getElementById('auth-error-box');
       document.getElementById('login-btn').addEventListener('click', () => {
         const email = document.getElementById('login-email').value.trim();
         const pass = document.getElementById('login-pass').value;
         if (!email || !pass){
-          alert('Preencha e-mail e senha.');
+          errorBox.innerHTML = '<div class="auth-error">Preencha e-mail e senha.</div>';
           return;
         }
+        errorBox.innerHTML = '';
         const btn = document.getElementById('login-btn');
         btn.disabled = true; btn.textContent = 'Entrando...';
         auth.signInWithEmailAndPassword(email, pass)
@@ -1396,7 +1370,7 @@ const clothesData = [
             renderAccount();
           })
           .catch(err => {
-            alert(firebaseErrorMessage(err));
+            errorBox.innerHTML = '<div class="auth-error">' + firebaseErrorMessage(err) + '</div>';
             btn.disabled = false; btn.textContent = 'Entrar';
           });
       });
