@@ -182,22 +182,16 @@
   }
   @media (min-width:720px){ .cat-grid{grid-template-columns:repeat(4,1fr);} }
   .cat-card{
-    position:relative; border-radius:var(--radius-card); overflow:hidden;
-    aspect-ratio:4/3;
-    background:linear-gradient(155deg,#1c1c1c,#050505);
-    display:flex; align-items:flex-end; padding:16px;
+    border-radius:var(--radius-card);
+    background:var(--muted-bg);
+    display:flex; align-items:center; justify-content:center;
+    padding:30px 14px;
     border:none; cursor:pointer;
   }
-  .cat-card:nth-child(2){background:linear-gradient(155deg,#e7e2d6,#cfc7b3); color:#111;}
-  .cat-card:nth-child(3){background:linear-gradient(155deg,#dfe3e6,#c3c9cd); color:#111;}
-  .cat-card:nth-child(4){background:linear-gradient(155deg,#2b2f33,#101214);}
-  .cat-card:nth-child(5){background:linear-gradient(155deg,#3a3f33,#1a1d16);}
-  .cat-card:nth-child(6){background:linear-gradient(155deg,#e0d8c8,#c2b79f); color:#111;}
-  .cat-card:nth-child(7){background:linear-gradient(155deg,#d9dde0,#b7bdc2); color:#111;}
-  .cat-card:nth-child(8){background:linear-gradient(155deg,#232323,#050505);}
-  .cat-card:nth-child(9){background:linear-gradient(155deg,#efe6d8,#d6c9ae); color:#111;}
-  .cat-card span{font-weight:800; font-size:16px; color:inherit;}
-  .cat-card:nth-child(1) span, .cat-card:nth-child(4) span, .cat-card:nth-child(5) span, .cat-card:nth-child(8) span{color:#fff;}
+  .cat-card span{
+    font-weight:700; font-size:15px; color:var(--ink);
+    text-transform:uppercase; text-align:center; letter-spacing:0.01em;
+  }
 
   /* Trust strip */
   .trust{
@@ -402,15 +396,15 @@
   <section class="section" id="categorias">
     <h2>Categorias</h2>
     <div class="cat-grid">
-      <button class="cat-card" data-cat="mizuno"><span>Mizuno</span></button>
-      <button class="cat-card" data-cat="nike"><span>Nike</span></button>
-      <button class="cat-card" data-cat="adidas"><span>Adidas</span></button>
-      <button class="cat-card" data-cat="lacoste"><span>Lacoste</span></button>
       <button class="cat-card" data-cat="blusas-jaquetas"><span>Blusas/Jaquetas</span></button>
       <button class="cat-card" data-cat="calcas-bermudas"><span>Calças/Bermudas</span></button>
-      <button class="cat-card" data-cat="camisas"><span>Camisas</span></button>
-      <button class="cat-card" data-cat="conjunto"><span>Conjunto</span></button>
+      <button class="cat-card" data-cat="mizuno"><span>Mizuno</span></button>
+      <button class="cat-card" data-cat="nike"><span>Nike</span></button>
       <button class="cat-card" data-cat="bone-acessorios"><span>Boné/Acessórios</span></button>
+      <button class="cat-card" data-cat="conjunto"><span>Conjunto</span></button>
+      <button class="cat-card" data-cat="camisas"><span>Camisas</span></button>
+      <button class="cat-card" data-cat="adidas"><span>Adidas</span></button>
+      <button class="cat-card" data-cat="lacoste"><span>Lacoste</span></button>
     </div>
   </section>
 
@@ -712,7 +706,7 @@ const clothesData = [
   mizuno_preto_cinza: "file_00000000be34820e8dc7d21021951f9d.png",
   mizuno_preto_vermelho: "file_00000000aeb4820ea4ad56bef2df1550.png",
   mizuno_preto_dourado: "file_00000000b8c0820eae9f069a0e125b71.png",
-  mizuno_preto_grafite: "",
+  mizuno_preto_grafite: "file_000000004b30820e995629c49847f237.png",
   mizuno_preto_pink: "",
   mizuno_preto_verde: "",
 };
