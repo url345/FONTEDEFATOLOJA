@@ -587,7 +587,7 @@
   p13_tr: "",
   p14_bl: "file_0000000097cc820ea5f1f0687121772f.png",
   p14_br: "file_0000000082cc820eab59bf918501e47d.png",
-  p14_tl: "",
+  p14_tl: "file_000000007c40824381d1e3dc4a6b5dcd.png",
   p14_tr: "",
   p15_bl: "file_000000005088820ea24d3575ee29dcc4.png",
   p15_br: "file_0000000008fc820ebe6dc0a993fe4dcf.png",
@@ -609,8 +609,8 @@
   p3_br: "",
   p3_tl: "",
   p3_tr: "",
-  p4_bl: "",
-  p4_br: "",
+  p4_bl: "file_0000000069a4820e8e1ca149590ff7b9.png",
+  p4_br: "file_0000000038fc820eb4780990dad76f76.png",
   p4_tl: "file_000000002050820eae2e0e1616b5fb92.png",
   p4_tr: "file_000000008928820ebe83b3faeeff4459.png",
   p5_bl: "",
@@ -623,12 +623,12 @@
   p6_tr: "",
   p7_bl: "",
   p7_br: "",
-  p7_tl: "",
+  p7_tl: "file_0000000013c4820eb7a7cac0b69d8012.png",
   p7_tr: "",
-  p8_bl: "",
-  p8_br: "",
-  p8_tl: "",
-  p8_tr: "",
+  p8_bl: "file_00000000d068820eb8bf0d21aef91b13.png",
+  p8_br: "file_000000008238820e964951972f34e5a7.png",
+  p8_tl: "file_00000000a6a8820e900dd4865a50e0d1.png",
+  p8_tr: "file_00000000f5a4820eb38713a39bc6b472.png",
   p9_bl: "file_0000000011f0820e831835746aa9adf8.png",
   p9_br: "file_00000000cc8c820e96dcf56d30b14c45.png",
   p9_tl: "",
@@ -771,7 +771,7 @@ const clothesData = [
   function productMedia(p){
     const img = productImages[p.photo] || (typeof clothesImages !== 'undefined' ? clothesImages[p.photo] : undefined);
     return img
-      ? `<img src="${img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">`
+      ? `<img src="${img}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
       : shoeSvg;
   }
 
