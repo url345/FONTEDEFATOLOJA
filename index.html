@@ -1245,8 +1245,10 @@ const clothesData = [
       .then(res => res.json().then(data => ({ ok: res.ok, data })))
       .then(({ ok, data }) => {
         if (!ok){
-          document.getElementById('pix-error-msg').textContent =
-            (data && data.error) ? data.error : 'Não foi possível gerar o Pix agora.';
+          const baseMsg = (data && data.error) ? data.error : 'Não foi possível gerar o Pix agora.';
+          const detail = data && data.details ? (typeof data.details === 'string' ? data.details : JSON.stringify(data.details)) : '';
+          document.getElementById('pix-error-msg').innerHTML =
+            baseMsg + (detail ? '<br><span style="font-size:11.5px;color:var(--ink-soft);word-break:break-all;">' + detail + '</span>' : '');
           showCheckoutStep('checkout-pix-error');
           return;
         }
