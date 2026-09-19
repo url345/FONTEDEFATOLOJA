@@ -502,6 +502,7 @@
     <div class="qv-size-label" id="qv-size-label">Tamanho</div>
     <div class="qv-sizes" id="qv-sizes"></div>
   </div>
+  <div id="qv-error-box"></div>
   <button class="btn-primary" id="qv-add-btn">Adicionar ao carrinho</button>
 </div>
 
@@ -516,6 +517,7 @@
 
   <div id="checkout-form-view">
     <div class="checkout-wrap">
+      <div id="checkout-error-box"></div>
       <div class="co-section">
         <h4>Endereço de entrega</h4>
         <div class="field"><label>Nome completo</label><input type="text" id="ck-name" placeholder="Seu nome"></div>
@@ -556,7 +558,7 @@
   </div>
 
   <div id="checkout-pix-view" style="display:none;">
-    <div class="checkout-wrap">
+    <div class="checkout-wrap" style="padding-bottom:24px;">
       <div style="text-align:center; padding:20px 0;">
         <h3 style="font-size:19px; font-weight:800; margin-bottom:6px;">Pagar com Pix</h3>
         <p style="color:var(--ink-soft); font-size:13.5px; margin-bottom:20px;">Escaneie o QR Code ou copie o código abaixo no app do seu banco.</p>
@@ -566,8 +568,11 @@
           <textarea id="pix-copy-paste" readonly rows="3" style="width:100%; border:1px solid var(--line); border-radius:10px; padding:11px 12px; font-size:12.5px; resize:none;"></textarea>
         </div>
         <button class="btn-primary" id="pix-copy-btn" style="margin-top:10px;">Copiar código</button>
-        <button class="btn-secondary" id="pix-done-btn" style="margin-top:10px;">Já paguei</button>
       </div>
+    </div>
+    <div class="checkout-footbar">
+      <p style="text-align:center; color:var(--ink-soft); font-size:12.5px; margin-bottom:10px;">Depois de pagar, toque no botão abaixo para continuar.</p>
+      <button class="btn-primary" id="pix-done-btn">Já paguei</button>
     </div>
   </div>
 
@@ -1109,6 +1114,7 @@ const clothesData = [
     qvProduct = products.find(p => p.id === id);
     if (!qvProduct) return;
     qvSize = null;
+    document.getElementById('qv-error-box').innerHTML = '';
 
     document.getElementById('qv-name').textContent = qvProduct.name;
     document.getElementById('qv-media').innerHTML = productMedia(qvProduct);
@@ -1150,10 +1156,12 @@ const clothesData = [
   document.getElementById('qv-add-btn').addEventListener('click', () => {
     if (!qvProduct) return;
     const needsSize = !!sizeOptionsFor(qvProduct);
+    const errorBox = document.getElementById('qv-error-box');
     if (needsSize && !qvSize){
-      alert('Escolha a numeração/tamanho antes de adicionar à sacola.');
+      errorBox.innerHTML = '<div class="auth-error">Escolha a numeração/tamanho antes de adicionar à sacola.</div>';
       return;
     }
+    errorBox.innerHTML = '';
     addToCart(qvProduct.id, qvSize);
     closeQuickView();
   });
@@ -1174,6 +1182,7 @@ const clothesData = [
     closeCart();
     checkoutScreen.classList.add('open');
     showCheckoutStep('checkout-form-view');
+    document.getElementById('checkout-error-box').innerHTML = '';
     // pré-preenche CEP se já foi calculado na sacola
     const cepVal = document.getElementById('cep-input').value;
     if (cepVal) document.getElementById('ck-cep').value = cepVal;
@@ -1296,10 +1305,13 @@ const clothesData = [
     const name = document.getElementById('ck-name').value.trim();
     const phone = document.getElementById('ck-phone').value.trim();
     const addr = document.getElementById('ck-addr').value.trim();
+    const errorBox = document.getElementById('checkout-error-box');
     if (!name || !phone || !addr || !selectedShipping){
-      alert('Preencha nome, telefone, endereço e escolha uma opção de frete antes de confirmar.');
+      errorBox.innerHTML = '<div class="auth-error">Preencha nome, telefone, endereço e escolha uma opção de frete antes de confirmar.</div>';
+      errorBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
+    errorBox.innerHTML = '';
     const total = subtotal() + selectedShipping.price;
     lastOrderPayload = {
       amount: Number(total.toFixed(2)),
