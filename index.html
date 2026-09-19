@@ -555,6 +555,35 @@
     </div>
   </div>
 
+  <div id="checkout-pix-view" style="display:none;">
+    <div class="checkout-wrap">
+      <div style="text-align:center; padding:20px 0;">
+        <h3 style="font-size:19px; font-weight:800; margin-bottom:6px;">Pagar com Pix</h3>
+        <p style="color:var(--ink-soft); font-size:13.5px; margin-bottom:20px;">Escaneie o QR Code ou copie o código abaixo no app do seu banco.</p>
+        <div id="pix-qr-box" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
+        <div class="field" style="text-align:left;">
+          <label>Pix copia e cola</label>
+          <textarea id="pix-copy-paste" readonly rows="3" style="width:100%; border:1px solid var(--line); border-radius:10px; padding:11px 12px; font-size:12.5px; resize:none;"></textarea>
+        </div>
+        <button class="btn-primary" id="pix-copy-btn" style="margin-top:10px;">Copiar código</button>
+        <button class="btn-secondary" id="pix-done-btn" style="margin-top:10px;">Já paguei</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="checkout-pix-loading" style="display:none;">
+    <div class="confirm-box">
+      <p style="color:var(--ink-soft); font-size:14.5px;">Gerando o Pix, aguarde um instante...</p>
+    </div>
+  </div>
+
+  <div id="checkout-pix-error" style="display:none;">
+    <div class="confirm-box">
+      <p style="color:var(--danger); font-size:14.5px; margin-bottom:20px;" id="pix-error-msg">Não foi possível gerar o Pix agora.</p>
+      <button class="btn-secondary" id="pix-retry-btn" style="max-width:260px; margin:0 auto;">Tentar de novo</button>
+    </div>
+  </div>
+
   <div id="checkout-confirm-view" style="display:none;">
     <div class="confirm-box">
       <div class="tick">
@@ -1144,8 +1173,7 @@ const clothesData = [
     if (cart.length === 0) return;
     closeCart();
     checkoutScreen.classList.add('open');
-    document.getElementById('checkout-form-view').style.display = 'block';
-    document.getElementById('checkout-confirm-view').style.display = 'none';
+    showCheckoutStep('checkout-form-view');
     // pré-preenche CEP se já foi calculado na sacola
     const cepVal = document.getElementById('cep-input').value;
     if (cepVal) document.getElementById('ck-cep').value = cepVal;
@@ -1190,6 +1218,78 @@ const clothesData = [
     checkoutScreen.classList.remove('open');
   });
 
+  const VERCEL_API_URL = "https://fontedefatoloja-cfgrne3mn-i-b999.vercel.app/api/create-charge";
+
+  function showCheckoutStep(id){
+    ['checkout-form-view', 'checkout-pix-loading', 'checkout-pix-view', 'checkout-pix-error', 'checkout-confirm-view']
+      .forEach(sid => { document.getElementById(sid).style.display = (sid === id) ? 'block' : 'none'; });
+  }
+
+  function extractPixFields(data){
+    // A NovaPay pode devolver os campos com nomes diferentes; tentamos os mais comuns.
+    const qr = data.qrCodeImage || data.qrCode || data.qr_code || data.qrCodeBase64 || data.qr_code_base64 || data.pixQrCode || null;
+    const copyPaste = data.copyPaste || data.copy_paste || data.pixCopiaCola || data.brCode || data.qrCodeText || data.qr_code_text || data.emv || null;
+    return { qr, copyPaste };
+  }
+
+  let lastOrderPayload = null;
+
+  function generatePix(){
+    showCheckoutStep('checkout-pix-loading');
+
+    fetch(VERCEL_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(lastOrderPayload)
+    })
+      .then(res => res.json().then(data => ({ ok: res.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok){
+          document.getElementById('pix-error-msg').textContent =
+            (data && data.error) ? data.error : 'Não foi possível gerar o Pix agora.';
+          showCheckoutStep('checkout-pix-error');
+          return;
+        }
+
+        const { qr, copyPaste } = extractPixFields(data);
+        const qrBox = document.getElementById('pix-qr-box');
+        const copyField = document.getElementById('pix-copy-paste');
+
+        if (qr){
+          const src = qr.startsWith('data:') ? qr : ('data:image/png;base64,' + qr);
+          qrBox.innerHTML = `<img src="${src}" alt="QR Code Pix" style="width:220px;height:220px;border:1px solid var(--line);border-radius:12px;">`;
+        } else {
+          qrBox.innerHTML = '<p style="color:var(--ink-soft);font-size:13px;">QR Code não veio na resposta — use o código copia-e-cola abaixo.</p>';
+        }
+        copyField.value = copyPaste || JSON.stringify(data);
+
+        showCheckoutStep('checkout-pix-view');
+      })
+      .catch(() => {
+        document.getElementById('pix-error-msg').textContent = 'Erro de conexão ao gerar o Pix. Tente novamente.';
+        showCheckoutStep('checkout-pix-error');
+      });
+  }
+
+  document.getElementById('pix-copy-btn').addEventListener('click', () => {
+    const field = document.getElementById('pix-copy-paste');
+    field.select();
+    navigator.clipboard.writeText(field.value).then(() => {
+      const btn = document.getElementById('pix-copy-btn');
+      const original = btn.textContent;
+      btn.textContent = 'Copiado!';
+      setTimeout(() => { btn.textContent = original; }, 1800);
+    }).catch(() => {});
+  });
+
+  document.getElementById('pix-done-btn').addEventListener('click', () => {
+    showCheckoutStep('checkout-confirm-view');
+    cart = [];
+    renderCart();
+  });
+
+  document.getElementById('pix-retry-btn').addEventListener('click', generatePix);
+
   document.getElementById('place-order-btn').addEventListener('click', () => {
     const name = document.getElementById('ck-name').value.trim();
     const phone = document.getElementById('ck-phone').value.trim();
@@ -1198,10 +1298,12 @@ const clothesData = [
       alert('Preencha nome, telefone, endereço e escolha uma opção de frete antes de confirmar.');
       return;
     }
-    document.getElementById('checkout-form-view').style.display = 'none';
-    document.getElementById('checkout-confirm-view').style.display = 'block';
-    cart = [];
-    renderCart();
+    const total = subtotal() + selectedShipping.price;
+    lastOrderPayload = {
+      amount: Number(total.toFixed(2)),
+      description: `Pedido Fonte de Fato - ${name}`
+    };
+    generatePix();
   });
 
   document.getElementById('back-to-store-btn').addEventListener('click', () => {
